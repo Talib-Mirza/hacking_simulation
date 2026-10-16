@@ -1,0 +1,262 @@
+.network-map {
+  position: relative;
+  width: 100%;
+  isolation: isolate;
+  color: #81b695;
+  overflow: hidden;
+}
+
+.network-map__ambient {
+  position: absolute;
+  z-index: -1;
+  inset: 3% 8% 0 4%;
+  background: radial-gradient(
+    ellipse at 35% 52%,
+    rgb(84 155 107 / 9%),
+    transparent 60%
+  );
+  pointer-events: none;
+}
+
+.network-map__canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+.network-map__grid {
+  color: #65806d;
+  opacity: 0.15;
+}
+.network-map__contours {
+  fill: none;
+  stroke: #658771;
+  stroke-width: 0.6;
+  opacity: 0.11;
+}
+.network-map__streets {
+  fill: none;
+  stroke: #70927e;
+  stroke-width: 0.7;
+  opacity: 0.21;
+}
+.network-map__building {
+  fill: #17241e;
+  stroke: #4a6a56;
+  stroke-width: 0.8;
+}
+.network-map__building--lit {
+  fill: #24392b;
+  stroke: #759c7f;
+}
+.network-map__building-shadow {
+  fill: #0b120e;
+  stroke: #2e4737;
+  stroke-width: 0.5;
+}
+.network-map__building-floor {
+  fill: none;
+  stroke: #64816b;
+  stroke-width: 0.6;
+  opacity: 0.55;
+}
+.network-map__routes {
+  stroke-width: 1.1;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.network-map__unknown-route {
+  fill: none;
+  stroke: #a9806c;
+  stroke-width: 0.8;
+  stroke-dasharray: 3 5;
+  opacity: 0.55;
+}
+.network-map__route-glow {
+  fill: none;
+  stroke: #95e8b4;
+  stroke-width: 3;
+  opacity: 0.18;
+}
+.network-map__node-halo {
+  fill: #619779;
+  fill-opacity: 0.045;
+  stroke: #5a9c76;
+  stroke-width: 0.65;
+  stroke-opacity: 0.35;
+}
+.network-map__node-base {
+  fill: #182c21;
+  stroke: #85c8a0;
+  stroke-width: 1;
+}
+.network-map__node-fold {
+  fill: none;
+  stroke: #64967a;
+  stroke-width: 0.7;
+  opacity: 0.6;
+}
+.network-map__node-core {
+  fill: #a3dfb6;
+}
+.network-map__node--0 .network-map__node-base {
+  fill: #99ddae;
+  stroke: #c7f8d5;
+}
+.network-map__node--0 .network-map__node-fold {
+  stroke: #b7edc8;
+  opacity: 0.8;
+}
+.network-map__node--0 .network-map__node-halo {
+  fill: #9befb8;
+  fill-opacity: 0.09;
+  stroke: #8acda2;
+  stroke-opacity: 0.55;
+}
+.network-map__meridian-mark {
+  fill: none;
+  stroke: #172c1f;
+  stroke-width: 2.1;
+  stroke-linejoin: round;
+  stroke-linecap: square;
+}
+.network-map__label {
+  fill: #b2c6b8;
+  font:
+    500 9px "IBM Plex Mono",
+    "SFMono-Regular",
+    Consolas,
+    monospace;
+  letter-spacing: 1.65px;
+}
+.network-map__sublabel {
+  fill: #5b7664;
+  font:
+    400 6.5px "IBM Plex Mono",
+    "SFMono-Regular",
+    Consolas,
+    monospace;
+  letter-spacing: 1.1px;
+}
+.network-map__node--0 .network-map__sublabel {
+  fill: #8bb99b;
+}
+.network-map__threat-outline {
+  fill: #221c18;
+  stroke: #b48570;
+  stroke-width: 0.8;
+}
+.network-map__threat-mark {
+  fill: none;
+  stroke: #ce9a83;
+  stroke-width: 1.5;
+}
+.network-map__threat .network-map__label {
+  fill: #b18f7d;
+  font-size: 8px;
+}
+.network-map__threat .network-map__sublabel {
+  fill: #715e50;
+  font-size: 5.8px;
+}
+.network-map__threat--detected .network-map__threat-outline {
+  stroke: #ee9e7c;
+}
+.network-map__coordinates {
+  fill: #486052;
+  font:
+    400 6.7px "IBM Plex Mono",
+    "SFMono-Regular",
+    Consolas,
+    monospace;
+  letter-spacing: 1px;
+}
+.network-map__coordinates path {
+  fill: none;
+  stroke: #3d5546;
+  stroke-width: 0.7;
+}
+.network-map__legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 25px;
+  margin: -2px 0 12px;
+  color: #64766b;
+  font:
+    400 9px "IBM Plex Mono",
+    "SFMono-Regular",
+    Consolas,
+    monospace;
+  letter-spacing: 0.15px;
+}
+.network-map__legend > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+.network-map__legend-dot {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #a6dcb7;
+  box-shadow: 0 0 7px #a6dcb733;
+}
+.network-map__legend-line {
+  width: 14px;
+  height: 1px;
+  background: #759a81;
+}
+.network-map__legend-signal i {
+  display: block;
+  width: 5px;
+  height: 5px;
+  border: 1px solid #a27c66;
+  transform: rotate(45deg);
+}
+.network-map--compact .network-map__canvas {
+  width: 142%;
+  max-width: none;
+  margin-left: -24%;
+}
+.network-map--compact .network-map__coordinates {
+  opacity: 0.55;
+}
+.network-map--compact .network-map__legend {
+  gap: 16px;
+  font-size: 8px;
+  margin-top: -7px;
+}
+.network-map--compact .network-map__legend-signal {
+  display: none;
+}
+
+@media (max-width: 650px) {
+  .network-map__canvas {
+    width: 125%;
+    max-width: none;
+    margin-left: -13%;
+  }
+  .network-map__coordinates {
+    opacity: 0.6;
+  }
+  .network-map__legend {
+    font-size: 7px;
+    gap: 14px;
+    margin-top: 1px;
+  }
+  .network-map__legend > span {
+    gap: 5px;
+  }
+  .network-map__legend-signal {
+    display: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .network-map__packets {
+    display: none;
+  }
+}

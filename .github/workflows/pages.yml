@@ -45,3 +45,51 @@ jobs:
       - name: Publish the app
         id: deployment
         uses: actions/deploy-pages@v4
+  hosting-status:
+    name: Report hosting status
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check Pages and the public site
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          node --input-type=module <<'JS'
+          import {execFileSync} from 'node:child_process';
+          import {writeFileSync} from 'node:fs';
+          const repo=process.env.GITHUB_REPOSITORY;
+          const status={sourceSha:process.env.SOURCE_SHA,runUrl:`https://github.com/${repo}/actions/runs/${process.env.GITHUB_RUN_ID}`};
+          function api(path){try{return JSON.parse(execFileSync('gh',['api',path],{encoding:'utf8',stdio:['ignore','pipe','pipe']}));}catch(error){return {error:String(error.stderr||error.message).slice(0,1200)};}}
+          const repository=api(`repos/${repo}`);
+          status.repository={private:repository.private,hasPages:repository.has_pages};
+          const pages=api(`repos/${repo}/pages`);
+          status.pages=pages.error?pages:{url:pages.html_url,status:pages.status,buildType:pages.build_type};
+          if(pages.html_url){
+            try {
+              const response=await fetch(pages.html_url,{signal:AbortSignal.timeout(20000)});
+              const html=await response.text();
+              status.site={httpStatus:response.status,correctTitle:html.includes('SIGNAL ZERO')};
+              const script=html.match(/<script[^>]+src="([^"]+)"/);
+              if(script){const asset=await fetch(new URL(script[1],pages.html_url),{signal:AbortSignal.timeout(20000)});status.site.scriptStatus=asset.status;}
+            }catch(error){status.site={error:String(error.message)};}
+          }
+          writeFileSync('hosting-status.json',JSON.stringify(status,null,2)+'\n');
+          JS
+      - name: Save diagnostic result
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          blob=$(git hash-object -w hosting-status.json)
+          tree=$(printf '100644 blob %s\thosting-status.json\n' "$blob" | git mktree)
+          parent=$(git ls-remote origin refs/heads/codex/hosting-status | cut -f1)
+          if [ -n "$parent" ]; then
+            git fetch origin refs/heads/codex/hosting-status
+            commit=$(printf 'Record Signal Zero hosting status\n' | git commit-tree "$tree" -p "$parent")
+          else
+            commit=$(printf 'Record Signal Zero hosting status\n' | git commit-tree "$tree")
+          fi
+          git push origin "$commit":refs/heads/codex/hosting-status

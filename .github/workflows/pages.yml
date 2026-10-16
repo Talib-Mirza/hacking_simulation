@@ -47,6 +47,8 @@ jobs:
         uses: actions/deploy-pages@v4
   hosting-status:
     name: Report hosting status
+    needs: [build, deploy]
+    if: always()
     runs-on: ubuntu-latest
     permissions:
       contents: write
